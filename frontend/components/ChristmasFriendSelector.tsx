@@ -27,7 +27,7 @@ export default function ChristmasFriendSelector() {
         setInitialLoading(false);
       }
     };
-    
+
     loadData();
   }, []);
 
@@ -37,7 +37,7 @@ export default function ChristmasFriendSelector() {
         try {
           const status = await getStatus(selectedStudentId);
           if (status.hasAssignment) {
-            setFriendName(status.friendName);
+            setFriendName(status.friendName || null);
           } else {
             setFriendName(null);
           }
@@ -45,17 +45,17 @@ export default function ChristmasFriendSelector() {
           console.error('Failed to check status:', err);
         }
       };
-      
+
       checkStatus();
     }
   }, [selectedStudentId]);
 
   const handleReveal = async () => {
     if (!selectedStudentId) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const result = await revealFriend(selectedStudentId);
       setFriendName(result.friendName);
@@ -106,7 +106,7 @@ export default function ChristmasFriendSelector() {
         <p className="text-gray-600 text-lg mb-6">
           Select your name and discover your Secret Santa assignment!
         </p>
-        
+
         <select
           value={selectedStudentId || ''}
           onChange={(e) => setSelectedStudentId(Number(e.target.value))}
@@ -120,11 +120,11 @@ export default function ChristmasFriendSelector() {
           ))}
         </select>
       </div>
-      
+
       <button
         onClick={handleReveal}
         disabled={loading || !selectedStudentId}
-        className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg"
+        className="w-full bg-linear-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg"
       >
         {loading ? (
           <div className="flex items-center justify-center">
@@ -135,7 +135,7 @@ export default function ChristmasFriendSelector() {
           '🎄 Reveal My Christmas Friend 🎄'
         )}
       </button>
-      
+
       {error && (
         <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-xl p-4">
           <p className="text-red-700 font-medium">❌ {error}</p>
