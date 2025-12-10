@@ -9,14 +9,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 router.post('/register', async (req, res) => {
   try {
     const { token } = req.body;
+    console.log('Registration attempt with token:', token);
     
     const signupToken = await SignupToken.findOne({ 
-      where: { token, used: false },
+      where: { token },
       include: [User]
     });
     
+    console.log('Found token:', signupToken ? 'Yes' : 'No');
+    
     if (!signupToken) {
-      return res.status(400).json({ error: 'Invalid or used token' });
+      return res.status(400).json({ error: 'Invalid token' });
+    }
+    
+    if (signupToken.used) {
+      return res.status(400).json({ error: 'Token already used' });
     }
     
     await SignupToken.update(
@@ -29,6 +36,7 @@ router.post('/register', async (req, res) => {
     
     res.json({ token: authToken, user: { rollNumber: user.rollNumber, name: user.name } });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
