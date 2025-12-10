@@ -38,25 +38,25 @@ export default function Registration({ onSuccess, onError }: RegistrationProps) 
 
   return (
     <div className="text-center py-6">
-      <div className="text-6xl mb-6">🎄</div>
-      <h1 className="text-3xl font-bold text-green-700 mb-4">Christmas Friend Registration</h1>
+      <div className="text-7xl mb-6">🎄</div>
+      <h1 className="text-3xl font-bold text-emerald-800 mb-3">Christmas Friend Registration</h1>
       <p className="text-gray-600 mb-8">Enter your signup token to register</p>
 
-      <form onSubmit={handleRegister} className="max-w-md mx-auto space-y-4">
+      <form onSubmit={handleRegister} className="space-y-5">
         <input
           type="text"
           placeholder="Signup Token"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none"
+          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none transition-all text-gray-900 placeholder-gray-400 bg-white"
           required
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300"
+          className="w-full bg-linear-to-r from-red-500 to-emerald-600 hover:from-red-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:scale-100 shadow-md"
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? 'Registering...' : 'Register →'}
         </button>
       </form>
     </div>

@@ -19,7 +19,7 @@ export default function ChristmasFriendSelector() {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const userData = localStorage.getItem('userData');
-    
+
     if (token && userData) {
       setUser(JSON.parse(userData));
       checkStatus();
@@ -81,33 +81,23 @@ export default function ChristmasFriendSelector() {
 
   if (initialLoading) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        <p className="text-gray-600 mt-4">Loading...</p>
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-emerald-200 border-t-emerald-600 mx-auto"></div>
+        <p className="text-gray-500 mt-6 text-lg font-medium">Loading...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="text-center py-6">
+      <div className="py-6">
         <Registration onSuccess={handleRegistrationSuccess} onError={setError} />
-        <div className="mt-6">
-          <p className="text-gray-600 mb-4">Already registered?</p>
-          <input
-            type="text"
-            placeholder="Enter your roll number to login"
-            className="p-2 border rounded mr-2"
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleLogin((e.target as HTMLInputElement).value);
-              }
-            }}
-          />
-        </div>
         {error && (
-          <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-xl p-4">
-            <p className="text-red-700 font-medium">❌ {error}</p>
+          <div className="mt-6 bg-red-50 border-l-4 border-red-500 rounded-lg p-4 shadow-sm">
+            <p className="text-red-700 font-medium flex items-center">
+              <span className="text-xl mr-2">⚠️</span>
+              {error}
+            </p>
           </div>
         )}
       </div>
@@ -117,28 +107,32 @@ export default function ChristmasFriendSelector() {
   if (friendName) {
     return (
       <div className="text-center py-6">
-        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 mb-6">
-          <div className="text-6xl mb-4">🎁</div>
-          <h2 className="text-2xl font-bold text-green-700 mb-2">
+        <div className="bg-linear-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-8 mb-6 shadow-lg">
+          <div className="text-7xl mb-6 animate-bounce">🎁</div>
+          <h2 className="text-2xl font-bold text-emerald-800 mb-4">
             Your Christmas Friend is:
           </h2>
-          <p className="text-3xl font-bold text-red-600 mb-4">{friendName}</p>
-          <div className="flex justify-center space-x-2 text-2xl">
-            <span>🎄</span>
-            <span>✨</span>
-            <span>🎅</span>
-            <span>✨</span>
-            <span>🎄</span>
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-md">
+            <p className="text-4xl font-bold bg-linear-to-r from-red-600 to-emerald-600 bg-clip-text text-transparent">
+              {friendName}
+            </p>
+          </div>
+          <div className="flex justify-center space-x-3 text-3xl">
+            <span className="animate-pulse">🎄</span>
+            <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>✨</span>
+            <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>🎅</span>
+            <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>✨</span>
+            <span className="animate-pulse">🎄</span>
           </div>
         </div>
-        <p className="text-gray-600 text-lg font-medium mb-4">
-          Time to spread some Christmas joy!
+        <p className="text-gray-700 text-lg font-semibold mb-6">
+          Time to spread some Christmas joy! 🎉
         </p>
         <button
           onClick={handleSignOut}
-          className="text-gray-500 hover:text-gray-700 underline"
+          className="text-gray-500 hover:text-gray-700 font-medium transition-colors"
         >
-          Sign out
+          Sign out →
         </button>
       </div>
     );
@@ -146,12 +140,12 @@ export default function ChristmasFriendSelector() {
 
   return (
     <div className="text-center py-6">
-      <div className="mb-8">
-        <div className="text-6xl mb-4">🎁</div>
-        <h2 className="text-2xl font-bold text-green-700 mb-2">
+      <div className="mb-10">
+        <div className="text-7xl mb-6">🎁</div>
+        <h2 className="text-3xl font-bold text-emerald-800 mb-3">
           Welcome, {user.name}!
         </h2>
-        <p className="text-gray-600 text-lg mb-6">
+        <p className="text-gray-600 text-lg">
           Ready to discover your Secret Santa assignment?
         </p>
       </div>
@@ -159,28 +153,35 @@ export default function ChristmasFriendSelector() {
       <button
         onClick={handleReveal}
         disabled={loading}
-        className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg mb-4"
+        className="w-full bg-linear-to-r from-red-500 to-emerald-600 hover:from-red-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-5 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl disabled:scale-100 shadow-lg mb-6"
       >
         {loading ? (
           <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent mr-3"></div>
             Revealing...
           </div>
         ) : (
-          '🎄 Reveal My Christmas Friend 🎄'
+          <span className="flex items-center justify-center">
+            <span className="text-2xl mr-2">🎄</span>
+            Reveal My Christmas Friend
+            <span className="text-2xl ml-2">🎄</span>
+          </span>
         )}
       </button>
 
       <button
         onClick={handleSignOut}
-        className="text-gray-500 hover:text-gray-700 underline"
+        className="text-gray-500 hover:text-gray-700 font-medium transition-colors"
       >
-        Sign out
+        Sign out →
       </button>
 
       {error && (
-        <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-xl p-4">
-          <p className="text-red-700 font-medium">❌ {error}</p>
+        <div className="mt-6 bg-red-50 border-l-4 border-red-500 rounded-lg p-4 shadow-sm">
+          <p className="text-red-700 font-medium flex items-center justify-center">
+            <span className="text-xl mr-2">⚠️</span>
+            {error}
+          </p>
         </div>
       )}
     </div>

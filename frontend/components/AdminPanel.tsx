@@ -103,107 +103,143 @@ export default function AdminPanel() {
 
   if (!isLoggedIn) {
     return (
-      <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold mb-6">Admin Login</h1>
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-3 border rounded mb-4"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border rounded mb-4"
-            required
-          />
-          <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded">
-            Login
-          </button>
-        </form>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
+          <div className="text-center mb-8">
+            <div className="text-5xl mb-4">🔐</div>
+            <h1 className="text-3xl font-bold text-slate-800 mb-2">Admin Login</h1>
+            <p className="text-slate-600">Access the control panel</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-5">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all text-slate-900 placeholder-slate-400 bg-white"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all text-slate-900 placeholder-slate-400 bg-white"
+              required
+            />
+            <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
+              Login →
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
-        <button
-          onClick={() => { localStorage.removeItem('adminToken'); setIsLoggedIn(false); }}
-          className="bg-red-600 text-white px-4 py-2 rounded"
-        >
-          Logout
-        </button>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-blue-100 p-4 rounded">
-          <h3 className="font-bold">Total Users</h3>
-          <p className="text-2xl">{stats.totalUsers}</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6 border border-slate-200">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold text-slate-800 mb-2">🎄 Admin Panel</h1>
+              <p className="text-slate-600">Manage Christmas Friend assignments</p>
+            </div>
+            <button
+              onClick={() => { localStorage.removeItem('adminToken'); setIsLoggedIn(false); }}
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              Logout →
+            </button>
+          </div>
         </div>
-        <div className="bg-green-100 p-4 rounded">
-          <h3 className="font-bold">Registered</h3>
-          <p className="text-2xl">{stats.registeredUsers}</p>
-        </div>
-        <div className="bg-yellow-100 p-4 rounded">
-          <h3 className="font-bold">Matched</h3>
-          <p className="text-2xl">{stats.matchedUsers}</p>
-        </div>
-      </div>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Generate Tokens</h2>
-        <textarea
-          placeholder="Enter students (one per line): RollNumber, Name"
-          value={newStudents}
-          onChange={(e) => setNewStudents(e.target.value)}
-          className="w-full p-3 border rounded mb-4 h-32"
-        />
-        <button
-          onClick={generateTokens}
-          className="bg-green-600 text-white px-4 py-2 rounded mr-4"
-        >
-          Generate Tokens
-        </button>
-        {tokens.length > 0 && (
-          <button
-            onClick={exportCSV}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Export CSV
-          </button>
-        )}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-blue-100 font-semibold mb-1">Total Users</h3>
+                <p className="text-4xl font-bold">{stats.totalUsers}</p>
+              </div>
+              <div className="text-5xl opacity-20">👥</div>
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-6 rounded-2xl shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-emerald-100 font-semibold mb-1">Registered</h3>
+                <p className="text-4xl font-bold">{stats.registeredUsers}</p>
+              </div>
+              <div className="text-5xl opacity-20">✅</div>
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white p-6 rounded-2xl shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-amber-100 font-semibold mb-1">Matched</h3>
+                <p className="text-4xl font-bold">{stats.matchedUsers}</p>
+              </div>
+              <div className="text-5xl opacity-20">🎁</div>
+            </div>
+          </div>
+        </div>
 
-      <div>
-        <h2 className="text-xl font-bold mb-4">Users</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border p-2">Roll Number</th>
-                <th className="border p-2">Name</th>
-                <th className="border p-2">Registered</th>
-                <th className="border p-2">Token Used</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id}>
-                  <td className="border p-2">{user.rollNumber}</td>
-                  <td className="border p-2">{user.name}</td>
-                  <td className="border p-2">{user.isRegistered ? '✅' : '❌'}</td>
-                  <td className="border p-2">{user.SignupToken?.used ? '✅' : '❌'}</td>
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+            <span className="text-3xl mr-3">🎫</span>
+            Generate Tokens
+          </h2>
+          <textarea
+            placeholder="Enter students (one per line): RollNumber, Name"
+            value={newStudents}
+            onChange={(e) => setNewStudents(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all text-slate-900 placeholder-slate-400 bg-white h-32 mb-4 font-mono"
+          />
+          <div className="flex gap-3">
+            <button
+              onClick={generateTokens}
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              Generate Tokens
+            </button>
+            {tokens.length > 0 && (
+              <button
+                onClick={exportCSV}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                📥 Export CSV
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+            <span className="text-3xl mr-3">📋</span>
+            Users List
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-slate-100 border-b-2 border-slate-200">
+                  <th className="text-left p-4 font-semibold text-slate-700">Roll Number</th>
+                  <th className="text-left p-4 font-semibold text-slate-700">Name</th>
+                  <th className="text-center p-4 font-semibold text-slate-700">Registered</th>
+                  <th className="text-center p-4 font-semibold text-slate-700">Token Used</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                    <td className="p-4 text-slate-800 font-medium">{user.rollNumber}</td>
+                    <td className="p-4 text-slate-800">{user.name}</td>
+                    <td className="p-4 text-center text-2xl">{user.isRegistered ? '✅' : '❌'}</td>
+                    <td className="p-4 text-center text-2xl">{user.SignupToken?.used ? '✅' : '❌'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
