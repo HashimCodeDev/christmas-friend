@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
     },
     friendId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'Students',
         key: 'id'

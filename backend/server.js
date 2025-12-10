@@ -10,8 +10,10 @@ app.use(express.json());
 
 const studentRoutes = require('./routes/students');
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
 app.use('/api', studentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -11,8 +11,10 @@ interface StatusResponse {
 
 interface AuthResponse {
   token: string;
-  email: string;
-  name: string;
+  user: {
+    rollNumber: string;
+    name: string;
+  };
 }
 
 const getAuthHeaders = () => {
@@ -23,11 +25,11 @@ const getAuthHeaders = () => {
   };
 };
 
-export const registerUser = async (token: string, email: string): Promise<AuthResponse> => {
+export const registerUser = async (token: string): Promise<AuthResponse> => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, email })
+    body: JSON.stringify({ token })
   });
   
   if (!response.ok) {
@@ -38,11 +40,11 @@ export const registerUser = async (token: string, email: string): Promise<AuthRe
   return response.json();
 };
 
-export const loginUser = async (email: string): Promise<AuthResponse> => {
+export const loginUser = async (rollNumber: string): Promise<AuthResponse> => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ rollNumber })
   });
   
   if (!response.ok) {

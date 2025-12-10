@@ -15,7 +15,7 @@ const generateTokens = async () => {
     await sequelize.sync({ force: true });
     
     for (const student of classList) {
-      const user = await User.create(student);
+      const user = await User.create({ ...student, isRegistered: true });
       const token = crypto.randomBytes(32).toString('hex');
       await SignupToken.create({ token, userId: user.id });
       console.log(`${student.rollNumber} (${student.name}): ${token}`);

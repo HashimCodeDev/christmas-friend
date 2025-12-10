@@ -5,7 +5,7 @@ import { revealFriend, getStatus, loginUser } from '../lib/api';
 import Registration from './Registration';
 
 interface User {
-  email: string;
+  rollNumber: string;
   name: string;
 }
 
@@ -45,9 +45,9 @@ export default function ChristmasFriendSelector() {
     await checkStatus();
   };
 
-  const handleLogin = async (email: string) => {
+  const handleLogin = async (rollNumber: string) => {
     try {
-      const authData = await loginUser(email);
+      const authData = await loginUser(rollNumber);
       localStorage.setItem('authToken', authData.token);
       localStorage.setItem('userData', JSON.stringify(authData.user));
       setUser(authData.user);
@@ -95,8 +95,8 @@ export default function ChristmasFriendSelector() {
         <div className="mt-6">
           <p className="text-gray-600 mb-4">Already registered?</p>
           <input
-            type="email"
-            placeholder="Enter your email to login"
+            type="text"
+            placeholder="Enter your roll number to login"
             className="p-2 border rounded mr-2"
             onKeyPress={(e) => {
               if (e.key === 'Enter') {

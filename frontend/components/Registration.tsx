@@ -9,7 +9,6 @@ interface RegistrationProps {
 
 export default function Registration({ onSuccess, onError }: RegistrationProps) {
   const [token, setToken] = useState('');
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -17,10 +16,10 @@ export default function Registration({ onSuccess, onError }: RegistrationProps) 
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, email })
+        body: JSON.stringify({ token })
       });
 
       if (!response.ok) {
@@ -41,22 +40,14 @@ export default function Registration({ onSuccess, onError }: RegistrationProps) 
     <div className="text-center py-6">
       <div className="text-6xl mb-6">🎄</div>
       <h1 className="text-3xl font-bold text-green-700 mb-4">Christmas Friend Registration</h1>
-      <p className="text-gray-600 mb-8">Enter your signup token and email to register</p>
-      
+      <p className="text-gray-600 mb-8">Enter your signup token to register</p>
+
       <form onSubmit={handleRegister} className="max-w-md mx-auto space-y-4">
         <input
           type="text"
           placeholder="Signup Token"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none"
-          required
-        />
-        <input
-          type="email"
-          placeholder="Your Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none"
           required
         />
