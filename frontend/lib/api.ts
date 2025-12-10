@@ -23,16 +23,31 @@ const getAuthHeaders = () => {
   };
 };
 
-export const verifyGoogleToken = async (googleToken: string): Promise<AuthResponse> => {
-  const response = await fetch(`${API_URL}/auth/verify`, {
+export const registerUser = async (token: string, email: string): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token: googleToken })
+    body: JSON.stringify({ token, email })
   });
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Authentication failed');
+    throw new Error(error.error || 'Registration failed');
+  }
+  
+  return response.json();
+};
+
+export const loginUser = async (email: string): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Login failed');
   }
   
   return response.json();

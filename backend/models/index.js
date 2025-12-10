@@ -10,9 +10,18 @@ const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://hashim@l
 
 const Student = require('./Student')(sequelize);
 const Assignment = require('./Assignment')(sequelize);
+const User = require('./User')(sequelize);
+const SignupToken = require('./SignupToken')(sequelize);
 
 Student.hasOne(Assignment, { foreignKey: 'studentId' });
 Assignment.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
 Assignment.belongsTo(Student, { foreignKey: 'friendId', as: 'friend' });
 
-module.exports = { sequelize, Student, Assignment };
+User.hasOne(SignupToken, { foreignKey: 'userId' });
+SignupToken.belongsTo(User, { foreignKey: 'userId' });
+
+User.hasOne(Assignment, { foreignKey: 'userId' });
+Assignment.belongsTo(User, { foreignKey: 'userId' });
+Assignment.belongsTo(User, { foreignKey: 'friendUserId', as: 'friendUser' });
+
+module.exports = { sequelize, Student, Assignment, User, SignupToken };

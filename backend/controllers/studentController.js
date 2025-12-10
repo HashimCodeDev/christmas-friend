@@ -1,22 +1,13 @@
-const { sequelize, Student, Assignment } = require('../models');
+const { sequelize, User, Assignment } = require('../models');
 
 const revealFriend = async (req, res) => {
-  const { email, name } = req.user;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Authentication required' });
-  }
+  const { userId } = req.user;
 
   const transaction = await sequelize.transaction();
   
   try {
-    let student = await Student.findOne({ where: { email }, transaction });
-    if (!student) {
-      student = await Student.create({ email, name }, { transaction });
-    }
-
     const existingAssignment = await Assignment.findOne({ 
-      where: { studentId: student.id },
+      where: { userId },
       transaction
     });
     
@@ -25,15 +16,15 @@ const revealFriend = async (req, res) => {
       return res.status(400).json({ error: 'Friend already assigned' });
     }
 
-    const allStudents = await Student.findAll({ transaction });
+    const allUsers = await User.findAll({ where: { isRegistered: true }, transaction });
     const assignments = await Assignment.findAll({ 
-      attributes: ['friendId'],
+      attributes: ['friendUserId'],
       transaction
     });
     
-    const assignedFriendIds = assignments.map(a => a.friendId);
-    const availableFriends = allStudents.filter(s => 
-      !assignedFriendIds.includes(s.id) && s.id !== student.id
+    const assignedFriendIds = assignments.map(a => a.friendUserId).filter(Boolean);
+    const availableFriends = allUsers.filter(u => 
+      !assignedFriendIds.includes(u.id) && u.id !== userId
     );
 
     if (availableFriends.length === 0) {
@@ -44,8 +35,8 @@ const revealFriend = async (req, res) => {
     const randomFriend = availableFriends[Math.floor(Math.random() * availableFriends.length)];
     
     await Assignment.create({
-      studentId: student.id,
-      friendId: randomFriend.id
+      userId,
+      friendUserId: randomFriend.id
     }, { transaction });
 
     await transaction.commit();
@@ -58,23 +49,18 @@ const revealFriend = async (req, res) => {
 };
 
 const getStatus = async (req, res) => {
-  const { email } = req.user;
+  const { userId } = req.user;
 
   try {
-    const student = await Student.findOne({ where: { email } });
-    if (!student) {
-      return res.json({ hasAssignment: false });
-    }
-
     const assignment = await Assignment.findOne({ 
-      where: { studentId: student.id },
-      include: [{ model: Student, as: 'friend', attributes: ['name'] }]
+      where: { userId },
+      include: [{ model: User, as: 'friendUser', attributes: ['name'] }]
     });
     
-    if (assignment) {
+    if (assignment && assignment.friendUser) {
       res.json({ 
         hasAssignment: true, 
-        friendName: assignment.friend.name 
+        friendName: assignment.friendUser.name 
       });
     } else {
       res.json({ hasAssignment: false });

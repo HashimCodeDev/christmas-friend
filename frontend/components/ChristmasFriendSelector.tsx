@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { revealFriend, getStatus, verifyGoogleToken } from '../lib/api';
-import GoogleSignIn from './GoogleSignIn';
+import { revealFriend, getStatus, loginUser } from '../lib/api';
+import Registration from './Registration';
 
 interface User {
   email: string;
@@ -38,15 +38,22 @@ export default function ChristmasFriendSelector() {
     }
   };
 
-  const handleGoogleSuccess = async (googleToken: string) => {
+  const handleRegistrationSuccess = async (token: string, userData: any) => {
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userData', JSON.stringify(userData));
+    setUser(userData);
+    await checkStatus();
+  };
+
+  const handleLogin = async (email: string) => {
     try {
-      const authData = await verifyGoogleToken(googleToken);
+      const authData = await loginUser(email);
       localStorage.setItem('authToken', authData.token);
-      localStorage.setItem('userData', JSON.stringify({ email: authData.email, name: authData.name }));
-      setUser({ email: authData.email, name: authData.name });
+      localStorage.setItem('userData', JSON.stringify(authData.user));
+      setUser(authData.user);
       await checkStatus();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed');
+      setError(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
@@ -84,7 +91,20 @@ export default function ChristmasFriendSelector() {
   if (!user) {
     return (
       <div className="text-center py-6">
-        <GoogleSignIn onSuccess={handleGoogleSuccess} onError={setError} />
+        <Registration onSuccess={handleRegistrationSuccess} onError={setError} />
+        <div className="mt-6">
+          <p className="text-gray-600 mb-4">Already registered?</p>
+          <input
+            type="email"
+            placeholder="Enter your email to login"
+            className="p-2 border rounded mr-2"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleLogin((e.target as HTMLInputElement).value);
+              }
+            }}
+          />
+        </div>
         {error && (
           <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-xl p-4">
             <p className="text-red-700 font-medium">❌ {error}</p>

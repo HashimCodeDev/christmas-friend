@@ -9,10 +9,18 @@ module.exports = (sequelize) => {
     },
     studentId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
       references: {
         model: 'Students',
+        key: 'id'
+      }
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      unique: true,
+      references: {
+        model: 'Users',
         key: 'id'
       }
     },
@@ -21,6 +29,14 @@ module.exports = (sequelize) => {
       allowNull: false,
       references: {
         model: 'Students',
+        key: 'id'
+      }
+    },
+    friendUserId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Users',
         key: 'id'
       }
     },

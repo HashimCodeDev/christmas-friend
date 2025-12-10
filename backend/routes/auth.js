@@ -1,35 +1,57 @@
 const express = require('express');
-const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { User, SignupToken } = require('../models');
 const router = express.Router();
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const COLLEGE_DOMAIN = process.env.COLLEGE_DOMAIN || '@college.edu';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-router.post('/verify', async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, email } = req.body;
     
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    const signupToken = await SignupToken.findOne({ 
+      where: { token, used: false },
+      include: [User]
     });
     
-    const payload = ticket.getPayload();
-    const { email, email_verified, name } = payload;
-    
-    if (!email_verified) {
-      return res.status(400).json({ error: 'Email not verified' });
+    if (!signupToken) {
+      return res.status(400).json({ error: 'Invalid or used token' });
     }
     
-
+    await User.update(
+      { email, isRegistered: true },
+      { where: { id: signupToken.userId } }
+    );
     
-    const authToken = jwt.sign({ email, name }, JWT_SECRET, { expiresIn: '24h' });
+    await SignupToken.update(
+      { used: true },
+      { where: { id: signupToken.id } }
+    );
     
-    res.json({ token: authToken, email, name });
+    const user = await User.findByPk(signupToken.userId);
+    const authToken = jwt.sign({ userId: user.id, rollNumber: user.rollNumber }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ token: authToken, user: { rollNumber: user.rollNumber, name: user.name, email: user.email } });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const user = await User.findOne({ where: { email, isRegistered: true } });
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+    
+    const authToken = jwt.sign({ userId: user.id, rollNumber: user.rollNumber }, JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({ token: authToken, user: { rollNumber: user.rollNumber, name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed' });
   }
 });
 
