@@ -77,4 +77,13 @@ const getStatus = async (req, res) => {
   }
 };
 
-module.exports = { revealFriend, getStatus };
+const getStudents = async (req, res) => {
+  try {
+    const students = await Student.findAll({ attributes: ['id', 'name'] });
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+module.exports = { revealFriend, getStatus, getStudents };
