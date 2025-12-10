@@ -1,0 +1,15 @@
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost:5432/christmas_friend', {
+  dialect: 'postgres',
+  logging: false
+});
+
+const Student = require('./Student')(sequelize);
+const Assignment = require('./Assignment')(sequelize);
+
+Student.hasOne(Assignment, { foreignKey: 'studentId' });
+Assignment.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
+Assignment.belongsTo(Student, { foreignKey: 'friendId', as: 'friend' });
+
+module.exports = { sequelize, Student, Assignment };
