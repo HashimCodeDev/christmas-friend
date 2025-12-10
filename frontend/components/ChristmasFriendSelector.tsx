@@ -11,6 +11,7 @@ interface User {
 
 export default function ChristmasFriendSelector() {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [friendName, setFriendName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +21,9 @@ export default function ChristmasFriendSelector() {
     setInitialLoading(false);
   }, []);
 
-  const checkStatus = async () => {
+  const checkStatus = async (authToken: string) => {
     try {
-      const status = await getStatus();
+      const status = await getStatus(authToken);
       if (status.hasAssignment) {
         setFriendName(status.friendName || null);
       }
@@ -31,27 +32,32 @@ export default function ChristmasFriendSelector() {
     }
   };
 
-  const handleRegistrationSuccess = async (token: string, userData: any) => {
+  const handleRegistrationSuccess = async (authToken: string, userData: any) => {
+    localStorage.clear();
+    setToken(authToken);
     setUser(userData);
-    await checkStatus();
+    await checkStatus(authToken);
   };
 
   const handleLogin = async (rollNumber: string) => {
     try {
+      localStorage.clear();
       const authData = await loginUser(rollNumber);
+      setToken(authData.token);
       setUser(authData.user);
-      await checkStatus();
+      await checkStatus(authData.token);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
   const handleReveal = async () => {
+    if (!token) return;
     setLoading(true);
     setError(null);
 
     try {
-      const result = await revealFriend();
+      const result = await revealFriend(token);
       setFriendName(result.friendName);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -61,6 +67,7 @@ export default function ChristmasFriendSelector() {
   };
 
   const handleSignOut = () => {
+    setToken(null);
     setUser(null);
     setFriendName(null);
     setError(null);

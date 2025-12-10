@@ -17,9 +17,10 @@ interface AuthResponse {
   };
 }
 
-const getAuthHeaders = () => {
+const getAuthHeaders = (token?: string) => {
   return {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
   };
 };
 
@@ -53,10 +54,10 @@ export const loginUser = async (rollNumber: string): Promise<AuthResponse> => {
   return response.json();
 };
 
-export const revealFriend = async (): Promise<RevealResponse> => {
+export const revealFriend = async (token: string): Promise<RevealResponse> => {
   const response = await fetch(`${API_URL}/reveal`, {
     method: 'POST',
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(token)
   });
   
   if (!response.ok) {
@@ -67,9 +68,9 @@ export const revealFriend = async (): Promise<RevealResponse> => {
   return response.json();
 };
 
-export const getStatus = async (): Promise<StatusResponse> => {
+export const getStatus = async (token: string): Promise<StatusResponse> => {
   const response = await fetch(`${API_URL}/status`, {
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(token)
   });
   
   if (!response.ok) {
