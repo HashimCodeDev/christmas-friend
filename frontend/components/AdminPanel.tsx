@@ -20,16 +20,10 @@ export default function AdminPanel() {
   const [tokens, setTokens] = useState<any[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-      setIsLoggedIn(true);
-      fetchData();
-    }
   }, []);
 
   const fetchData = async () => {
-    const token = localStorage.getItem('adminToken');
-    const headers = { Authorization: `Bearer ${token}` };
+    const headers = {};
     
     try {
       const [usersRes, statsRes] = await Promise.all([
@@ -55,7 +49,6 @@ export default function AdminPanel() {
       
       if (response.ok) {
         const { token } = await response.json();
-        localStorage.setItem('adminToken', token);
         setIsLoggedIn(true);
         fetchData();
       } else {
@@ -76,8 +69,7 @@ export default function AdminPanel() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/generate-tokens`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ students })
       });
@@ -146,7 +138,7 @@ export default function AdminPanel() {
               <p className="text-slate-600">Manage Christmas Friend assignments</p>
             </div>
             <button
-              onClick={() => { localStorage.removeItem('adminToken'); setIsLoggedIn(false); }}
+              onClick={() => { setIsLoggedIn(false); }}
               className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Logout →

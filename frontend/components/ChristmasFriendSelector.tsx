@@ -17,13 +17,6 @@ export default function ChristmasFriendSelector() {
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
-
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-      checkStatus();
-    }
     setInitialLoading(false);
   }, []);
 
@@ -39,8 +32,6 @@ export default function ChristmasFriendSelector() {
   };
 
   const handleRegistrationSuccess = async (token: string, userData: any) => {
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userData', JSON.stringify(userData));
     setUser(userData);
     await checkStatus();
   };
@@ -48,8 +39,6 @@ export default function ChristmasFriendSelector() {
   const handleLogin = async (rollNumber: string) => {
     try {
       const authData = await loginUser(rollNumber);
-      localStorage.setItem('authToken', authData.token);
-      localStorage.setItem('userData', JSON.stringify(authData.user));
       setUser(authData.user);
       await checkStatus();
     } catch (err) {
@@ -72,8 +61,6 @@ export default function ChristmasFriendSelector() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
     setUser(null);
     setFriendName(null);
     setError(null);

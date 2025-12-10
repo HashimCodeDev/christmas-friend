@@ -18,10 +18,8 @@ interface AuthResponse {
 }
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('authToken');
   return {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
+    'Content-Type': 'application/json'
   };
 };
 
