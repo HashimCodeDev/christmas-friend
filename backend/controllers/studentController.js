@@ -16,31 +16,26 @@ const revealFriend = async (req, res) => {
       return res.status(400).json({ error: 'Friend already assigned' });
     }
 
-    const allUsers = await User.findAll({ where: { isRegistered: true }, transaction });
-    const assignments = await Assignment.findAll({ 
-      attributes: ['friendUserId'],
-      transaction
-    });
+    const assignmentCount = await Assignment.count({ transaction });
     
-    const assignedFriendIds = assignments.map(a => a.friendUserId).filter(Boolean);
-    const availableFriends = allUsers.filter(u => 
-      !assignedFriendIds.includes(u.id) && u.id !== userId
-    );
-
-    if (availableFriends.length === 0) {
-      await transaction.rollback();
-      return res.status(400).json({ error: 'No friends available' });
+    if (assignmentCount === 0) {
+      const allUsers = await User.findAll({ where: { isRegistered: true }, transaction });
+      const shuffled = [...allUsers].sort(() => Math.random() - 0.5);
+      const assignments = shuffled.map((user, i) => ({
+        userId: user.id,
+        friendUserId: shuffled[(i + 1) % shuffled.length].id
+      }));
+      await Assignment.bulkCreate(assignments, { transaction });
     }
 
-    const randomFriend = availableFriends[Math.floor(Math.random() * availableFriends.length)];
-    
-    await Assignment.create({
-      userId,
-      friendUserId: randomFriend.id
-    }, { transaction });
+    const assignment = await Assignment.findOne({ 
+      where: { userId },
+      include: [{ model: User, as: 'friendUser', attributes: ['name'] }],
+      transaction
+    });
 
     await transaction.commit();
-    res.json({ friendName: randomFriend.name });
+    res.json({ friendName: assignment.friendUser.name });
   } catch (error) {
     await transaction.rollback();
     console.error('Reveal friend error:', error);
