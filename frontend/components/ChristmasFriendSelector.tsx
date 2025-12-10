@@ -14,13 +14,28 @@ export default function ChristmasFriendSelector() {
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [students, setStudents] = useState<Student[]>([]);
-  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('selectedStudentId');
+      return stored ? Number(stored) : null;
+    }
+    return null;
+  });
+  const [hasRevealed, setHasRevealed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('hasRevealed') === 'true';
+    }
+    return false;
+  });
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const studentsData = await getStudents();
         setStudents(studentsData);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('message', 'why make my life harder than it already is');
+        }
       } catch (err) {
         console.error('Failed to load students:', err);
       } finally {
@@ -59,6 +74,9 @@ export default function ChristmasFriendSelector() {
     try {
       const result = await revealFriend(selectedStudentId);
       setFriendName(result.friendName);
+      setHasRevealed(true);
+      localStorage.setItem('hasRevealed', 'true');
+      localStorage.setItem('selectedStudentId', selectedStudentId.toString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -109,10 +127,18 @@ export default function ChristmasFriendSelector() {
 
         <select
           value={selectedStudentId || ''}
-          onChange={(e) => setSelectedStudentId(Number(e.target.value))}
-          className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg mb-6 focus:border-green-500 focus:outline-none"
+          onChange={(e) => {
+            if (!hasRevealed) {
+              setSelectedStudentId(Number(e.target.value));
+            }
+          }}
+          disabled={hasRevealed}
+          className={`w-full p-3 border-2 rounded-lg text-lg mb-6 focus:outline-none ${hasRevealed
+              ? 'border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed'
+              : 'border-gray-300 focus:border-green-500'
+            }`}
         >
-          <option value="">Choose your name...</option>
+          <option value="">{hasRevealed ? 'Selection locked' : 'Choose your name...'}</option>
           {students.map(student => (
             <option key={student.id} value={student.id}>
               {student.name}
