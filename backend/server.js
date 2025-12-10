@@ -9,7 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 const studentRoutes = require('./routes/students');
+const authRoutes = require('./routes/auth');
 app.use('/api', studentRoutes);
+app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 

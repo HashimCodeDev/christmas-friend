@@ -28,12 +28,21 @@ cp .env.example backend/.env
 cp .env.example frontend/.env.local
 ```
 
-4. Create PostgreSQL database:
+4. Set up Google OAuth:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Add your domain to authorized origins
+   - Update `GOOGLE_CLIENT_ID` in both `.env` files
+   - Update `COLLEGE_DOMAIN` in backend/.env (e.g., `@yourcollege.edu`)
+
+5. Create PostgreSQL database:
 ```bash
 psql -c "CREATE DATABASE christmas_friend;"
 ```
 
-5. Update PostgreSQL connection in backend/.env if needed
+6. Update PostgreSQL connection in backend/.env if needed
 
 ### Database Setup
 
@@ -83,10 +92,11 @@ npm start
 
 ## Important Notes
 
+- **Google Workspace OAuth Required**: Users must sign in with college email
 - Each student can only reveal their friend once
 - No student can be assigned to themselves
 - Each friend can only be assigned to one person
-- Uses MongoDB transactions for atomicity
-- Update STUDENT_ID in ChristmasFriendSelector.js with actual student ID
 - Uses PostgreSQL with Sequelize ORM
 - Database tables created automatically on first run
+- Email domain validation enforced (must match COLLEGE_DOMAIN)
+- JWT tokens used for session management

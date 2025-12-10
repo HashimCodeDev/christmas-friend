@@ -9,11 +9,39 @@ interface StatusResponse {
   friendName?: string;
 }
 
-export const revealFriend = async (studentId: number): Promise<RevealResponse> => {
-  const response = await fetch(`${API_URL}/reveal`, {
+interface AuthResponse {
+  token: string;
+  email: string;
+  name: string;
+}
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('authToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` })
+  };
+};
+
+export const verifyGoogleToken = async (googleToken: string): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/auth/verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ studentId })
+    body: JSON.stringify({ token: googleToken })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Authentication failed');
+  }
+  
+  return response.json();
+};
+
+export const revealFriend = async (): Promise<RevealResponse> => {
+  const response = await fetch(`${API_URL}/reveal`, {
+    method: 'POST',
+    headers: getAuthHeaders()
   });
   
   if (!response.ok) {
@@ -24,8 +52,10 @@ export const revealFriend = async (studentId: number): Promise<RevealResponse> =
   return response.json();
 };
 
-export const getStatus = async (studentId: number): Promise<StatusResponse> => {
-  const response = await fetch(`${API_URL}/status/${studentId}`);
+export const getStatus = async (): Promise<StatusResponse> => {
+  const response = await fetch(`${API_URL}/status`, {
+    headers: getAuthHeaders()
+  });
   
   if (!response.ok) {
     throw new Error('Failed to get status');
